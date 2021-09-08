@@ -15,6 +15,22 @@
         "type": "github"
       }
     },
+    "graphql-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1631105680,
+        "narHash": "sha256-w/WEHxzmjqqYIDiByrSb6WW7qCT41FWIbtfgJK9HFQ8=",
+        "owner": "Urigo",
+        "repo": "graphql-mesh",
+        "rev": "fb44cc43013204eb8aa847007635741c19f3f2b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Urigo",
+        "repo": "graphql-mesh",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1630500761,
@@ -32,6 +48,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "graphql-src": "graphql-src",
         "nixpkgs": "nixpkgs"
       }
     }
