@@ -1,0 +1,97 @@
+{
+  "name": "graphql-mesh-monorepo",
+  "license": "MIT",
+  "version": "0.2.15",
+  "private": true,
+  "scripts": {
+    "postinstall": "patch-package && husky install",
+    "predeploy:website": "yarn generate-config-schema && yarn build:api-docs",
+    "deploy:website": "cd website && yarn deploy",
+    "generate-config-schema": "graphql-to-config-schema --schema ./**/yaml-config.graphql --json ./packages/types/src/config-schema.json --typings ./packages/types/src/config.ts --markdown ./website/docs/generated-markdown/ && prettier --write ./packages/types/src",
+    "prebuild": "yarn generate-config-schema && yarn build:playground && yarn copy-playground",
+    "transpile-ts": "tsc --project tsconfig.build.json",
+    "build": "yarn transpile-ts && bob build",
+    "build:api-docs": "node scripts/build-api-docs.js",
+    "build:playground": "cd packages/playground && yarn build",
+    "copy-playground": "node scripts/generate-playground.js",
+    "copy-config-schema": "cp ./packages/types/src/config-schema.json ./packages/types/dist/",
+    "fix-bin": "node scripts/fix-bin.js",
+    "postbuild": "yarn copy-config-schema && yarn fix-bin",
+    "lint": "eslint --ext .ts \"./packages/**/src/*.ts\"",
+    "prettier": "prettier --ignore-path .gitignore --write --list-different \"**/*.{ts,tsx,graphql,yml}\"",
+    "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.{ts,tsx,graphql,yml}\"",
+    "test": "jest --forceExit --no-watchman",
+    "test-and-build": "yarn build && yarn test",
+    "prerelease": "yarn build",
+    "release": "changeset publish",
+    "release:canary": "(node scripts/canary-release.js && yarn build && yarn changeset publish --tag $NPM_TAG) || echo Skipping Canary..."
+  },
+  "devDependencies": {
+    "@ardatan/graphql-to-config-schema": "0.1.25",
+    "@babel/core": "7.15.5",
+    "@babel/plugin-proposal-class-properties": "7.14.5",
+    "@babel/preset-env": "7.15.4",
+    "@babel/preset-typescript": "7.15.0",
+    "@changesets/cli": "2.17.0",
+    "@graphql-tools/schema": "8.2.0",
+    "@types/jest": "27.0.1",
+    "@types/node": "14.17.15",
+    "@typescript-eslint/eslint-plugin": "4.31.0",
+    "@typescript-eslint/parser": "4.31.0",
+    "babel-jest": "27.1.0",
+    "bob-the-bundler": "1.5.1",
+    "eslint": "7.32.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.24.2",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "5.1.0",
+    "eslint-plugin-standard": "4.1.0",
+    "globby": "11.0.4",
+    "graphql": "15.5.3",
+    "husky": "7.0.2",
+    "jest": "27.1.0",
+    "lint-staged": "11.1.2",
+    "patch-package": "6.4.7",
+    "prettier": "2.3.2",
+    "ts-jest": "27.0.5",
+    "typedoc": "0.21.9",
+    "typedoc-plugin-markdown": "3.9.0",
+    "typescript": "4.4.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "packages/**/src/**/*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "**/*.{ts,tsx,graphql,yml,json}": [
+      "prettier --write"
+    ]
+  },
+  "workspaces": {
+    "packages": [
+      "./packages/*",
+      "./packages/cache/*",
+      "./packages/handlers/*",
+      "./packages/transforms/*",
+      "./packages/mergers/*",
+      "./examples/*",
+      "./examples/federation-example/services/*",
+      "./examples/graphql-file-upload-example/frontend",
+      "./website"
+    ],
+    "nohoist": [
+      "@graphql-mesh/website/@docusaurus/*"
+    ]
+  },
+  "resolutions": {
+    "babel-jest": "27.1.0",
+    "jest-runner": "27.1.0",
+    "graphql": "15.5.3",
+    "@changesets/apply-release-plan": "5.0.1"
+  }
+}
