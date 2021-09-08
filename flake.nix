@@ -1,11 +1,18 @@
 {
-  description = "A very basic flake";
+  description = "use GraphQL query language to access data in remote APIs that don't run GraphQL";
+ 
+  inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = { self, nixpkgs }: {
-
-    packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
-
-    defaultPackage.x86_64-linux = self.packages.x86_64-linux.hello;
-
-  };
+  outputs = { self, nixpkgs, flake-utils }: 
+    (flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; }; 
+        gql = import ./default.nix { inherit pkgs; };
+      in 
+        {
+          packages.graphql-mesh-monorepo = gql.package;
+          defaultPackage = gql.package;
+          devShell = gql.shell;
+        }
+    ));
 }
