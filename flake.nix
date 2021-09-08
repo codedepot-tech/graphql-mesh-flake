@@ -1,5 +1,5 @@
 {
-  description = "use GraphQL query language to access data in remote APIs that don't run GraphQL";
+  description = "Use GraphQL query language to access data in remote APIs that don't run GraphQL";
  
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.graphql-src.url = "github:Urigo/graphql-mesh";
@@ -9,20 +9,20 @@
     (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        name = "graphql-mesh-monorepo";
-      in 
-        {
-          packages."${name}" = pkgs.mkYarnPackage {
+        gql = pkgs.mkYarnPackage {
             name = "graphql-mesh-monorepo";
             src = graphql-src;
             packageJSON = ./package.json;
             yarnLock = ./yarn.lock;
             yarnNix = ./yarn.nix;
           };
-          defaultPackage = self.packages.graphql-mesh-monorepo;
+      in rec
+        {
+          packages.graphql-mesh-monorepo = gql;
+          defaultPackage = gql;
           devShell = pkgs.mkShell {
             buildInputs = [
-              self.defaultPackage
+              gql
             ];
           };
         }
